@@ -1,57 +1,12 @@
-os: 
-  - linux
-  - osx
-  - windows
-
+osx_image: xcode10.3
 dist: focal
-
 language: node_js
 node_js:
   - 16.15.1
 
-cache:
-  directories:
-    - "$HOME/.cache/electron"
-    - "$HOME/.cache/electron-builder"
-    - "$HOME/.npm/_prebuilds"
-    # - node_modules
+os:
+  - linux
+  - osx
+  - windows
 
-env:
-  global:
-    - ELECTRON_CACHE=$HOME/.cache/electron
-    - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
-
-before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then npm install --global node-gyp@latest; fi
-
-install:
-  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then choco install windows-sdk-10-version-1809-all --yes; fi
-  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then powershell -Command 'Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine'; fi
-  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then npm i electron-rebuild --save-dev --legacy-peer-deps --openssl_fips=""; fi
-  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then npm i --legacy-peer-deps --openssl_fips=""; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then npm i --legacy-peer-deps --openssl_fips=""; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm i uglify-js --legacy-peer-deps; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm i bufferutil --save-optional --legacy-peer-deps; fi 
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm i utf-8-validate --save-optional --legacy-peer-deps; fi 
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm install canvas --save-optional --legacy-peer-deps; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm i --legacy-peer-deps --no-optional --openssl_fips=""; fi
-
-script:
-  - npm run electron:uglify
-  - npm run update-book-config
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then npm run electron:release --linux; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm run electron:release --mac; fi
-  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then Powershell -File ./scripts/electron-builder/nsis_code_sign.ps1; fi
-  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then npm run electron:release --win; fi
-
-# adding after failure phase for getting the log files
-after_failure:
-  - cat MSBuild_*.failure.txt
-
-# remove old cache by force before caching 
-before_cache:
-  - rm -rf $HOME/.cache/electron-builder/wine
-
-# only run this script on pull requests and merges into 
-# the 'master' and 'qa' branches
-
+# Your build steps and other configurations here
